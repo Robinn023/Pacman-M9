@@ -35,6 +35,11 @@ class Boundary {
             c.fill()
             c.closePath()
     }
+    update(){
+        this.draw()
+        this.position.x += this.velocity.x
+        this.position.y += this.velocity.y
+    }
     }
 
     const map = [
@@ -70,18 +75,56 @@ class Boundary {
                         })
                     )
                 break
-            }
-        })
+        }
     })
+})
+    
+function animate() {
+    requestAnimationFrame(animate)
+    c.clearRect(0, 0, canvas.width, canvas.height)
+    boundaries.forEach((boundary) => {
+        boundary.draw()
+    })
+    
+    player.update()
+}
 
-boundaries.forEach((boundary) => {
-    boundary.draw()
+animate()
+
+player.update()
+
+addEventListener('keydown', ({key}) =>{
+    switch (key) {
+        case'w':
+            player.velocity.y = -5
+            break
+        case'a':
+            player.velocity.x = -5
+            break
+        case's':
+            player.velocity.y = 5
+            break
+        case'd':
+            player.velocity.x = 5
+            break   
+    }
 })
 
-player.draw()
-
-addEventListener('keydown', () =>{
-    
+addEventListener('keyup', ({key}) =>{
+    switch (key) {
+        case'w':
+            player.velocity.y = 0
+            break
+        case'a':
+            player.velocity.x = 0
+            break
+        case's':
+            player.velocity.y = 0
+            break
+        case'd':
+            player.velocity.x = 0
+            break   
+    }
 })
 
     new Boundary({
