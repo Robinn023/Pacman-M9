@@ -7,17 +7,18 @@ const c = canvas.getContext('2d')
 class Boundary {
     static width = 40
     static height = 40
-    constructor({position}) {
+    constructor({position, image}) {
         this.position = position
         this.width = 40
         this.height = 40
+        this.image = image
     }
 
     draw(){
-        c.fillStyle = 'blue'
-        c.fillRect(this.position.x, this.
-            position.y, this.width, 
-            this.height)
+        // c.fillStyle = 'blue'
+        // c.fillRect(this.position.x, this.mposition.y, 
+        // this.width, this.height)
+        c.drawImage(this.image, this.position.x, this.position.y)
         }
     } 
 
@@ -46,11 +47,11 @@ let lastKey = ''
 
 const map = [
     ['-', '-', '-', '-', '-', '-', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', '-'],
-    ['-', ' ', '-', ' ', '-', ' ', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', '-'],
-    ['-', ' ', '-', ' ', '-', ' ', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', '-'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', '-', ' ', '-', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
+    ['|', ' ', '-', ' ', '-', ' ', '|'],
+    ['|', ' ', ' ', ' ', ' ', ' ', '|'],
     ['-', '-', '-', '-', '-', '-', '-']
   ]
 
@@ -81,19 +82,37 @@ const keys = {
     }
 }
 
-    map.forEach((row, i) => {
-        row.forEach((symbol, j) => {
-            switch (symbol) {
-                case '-':
-                    boundaries.push(
-                        new Boundary({
-                            position: {
-                                x: Boundary.width * j,
-                                y: Boundary.height * i
-                            }
-                        })
-                    )
+function createImage(src) {
+    const image = new Image()
+    image.src = src
+    return image
+}
+
+map.forEach((row, i) => {
+    row.forEach((symbol, j) => {
+        switch (symbol) {
+            case '-':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/pipeHorizontal.png')
+                    })
+                )
                 break
+            case '|':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/pipeVertical.png')
+                    })
+                )
+            break
         }
     })
 })
