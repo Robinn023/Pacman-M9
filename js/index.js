@@ -26,7 +26,7 @@ class Boundary {
     constructor({ position,velocity }) {
         this.position = position
         this.velocity = velocity
-        this.radius = 15
+        this.radius = 18
     }
     draw(){
         c.beginPath()
@@ -36,30 +36,31 @@ class Boundary {
             c.fill()
             c.closePath()
     }
+
     update(){
         this.draw()
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
     }
-    }
-    
-let lastKey = ''
+}
 
-const map = [
-    ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'], 
-    ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', '[', '7', ']', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', '_', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', '[', ']', ' ', ' ', ' ', '[', ']', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', '^', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', '[', '+', ']', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', '_', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', '[', ']', ' ', ' ', ' ', '[', ']', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', '^', ' ', ' ', ' ', ' ', '|'],
-    ['|', ' ', 'b', ' ', '[', '5', ']', ' ', 'b', ' ', '|'],
-    ['|', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-    ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3']
-  ]
+    class Pellet  {
+        constructor({ position}) {
+            this.position = position
+            this.radius = 3
+        }
+
+    draw(){
+        c.beginPath()
+        c.arc(this.position.x, this.position.y, this.radius, 0, 
+            Math.PI * 2)
+            c.fillStyle = 'red'
+            c.fill()
+            c.closePath()
+    }
+}
+
+const pellets = []
 
 const boundaries = []
     const player = new Player({
@@ -72,6 +73,24 @@ const boundaries = []
         y: 0
     }
 })
+    
+let lastKey = ''
+
+const map = [
+    ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'], 
+    ['|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'],
+    ['|', '.', 'b', '.', '[', '7', ']', ' ', 'b', '.', '|'],
+    ['|', '.', '.', '.', '.', '_', '.', '.', '.', '.', '|'],
+    ['|', '.', '[', ']', '.', ' ', '.', '[', ']', '.', '|'],
+    ['|', '.', '.', '.', '.', '^', '.', '.', '.', '.', '|'],
+    ['|', '.', 'b', '.', '[', '+', ']', '.', 'b', '.', '|'],
+    ['|', '.', '.', '.', '.', '_', '.', ' ', '.', '.', '|'],
+    ['|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'],
+    ['|', '.', '.', '.', '.', '^', '.', '.', ' ', '.', '|'],
+    ['|', '.', 'b', '.', '[', '5', ']', '.', 'b', '.', '|'],
+    ['|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'],
+    ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3']
+  ]
 
 const keys = {
     w: {
@@ -273,6 +292,16 @@ map.forEach((row, i) => {
                     })
                 )
             break
+            case '.':
+                pellets.push(
+                    new Pellet({
+                        position: {
+                            x: j * Boundary.width + Boundary.width / 2, 
+                            y: i * Boundary.height + Boundary.height / 2
+                        }
+                    })
+                )
+            break
 
         }
     })
@@ -333,7 +362,7 @@ function animate() {
                 player.velocity.x = 0
                 break
             } else {
-                player.velocity.x = -1
+                player.velocity.x = -1 
             }
         }
 
@@ -379,6 +408,10 @@ function animate() {
             }
         }
     }
+
+    pellets.forEach((pellet) => {
+        pellet.draw()
+    })
 
     boundaries.forEach((boundary) => {
         boundary.draw()
