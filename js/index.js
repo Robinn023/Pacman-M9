@@ -26,7 +26,7 @@ class Boundary {
     constructor({ position,velocity }) {
         this.position = position
         this.velocity = velocity
-        this.radius = 18
+        this.radius = 17
     }
     draw(){
         c.beginPath()
@@ -44,17 +44,16 @@ class Boundary {
     }
 }
 
-    class Pellet  {
-        constructor({ position}) {
-            this.position = position
-            this.radius = 3
-        }
-
+class Pellet  {
+    constructor({ position }) {
+        this.position = position
+        this.radius = 3
+    }
     draw(){
         c.beginPath()
         c.arc(this.position.x, this.position.y, this.radius, 0, 
             Math.PI * 2)
-            c.fillStyle = 'red'
+            c.fillStyle = 'black'
             c.fill()
             c.closePath()
     }
@@ -408,11 +407,23 @@ function animate() {
             }
         }
     }
-
-    pellets.forEach((pellet) => {
+    for (let i = pellets.length - 1; 0 < i; i--) {
+        const pellet = pellets[i]
         pellet.draw()
-    })
 
+        if (
+            Math.hypot(
+                pellet.position.x - player.position.x, 
+                pellet.position.y - player.position.y
+        ) < 
+        pellet.radius + player.radius
+    ) {
+            pellets.splice(i, 1)
+    }
+}
+    
+
+        
     boundaries.forEach((boundary) => {
         boundary.draw()
 
