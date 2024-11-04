@@ -1,6 +1,8 @@
 const canvas = document.querySelector ('canvas')
 const c = canvas.getContext('2d')
 
+const scoreEl = document.querySelector ('#scoreEl')
+
     canvas.width = innerWidth
     canvas.height = innerHeight 
 
@@ -53,7 +55,7 @@ class Pellet  {
         c.beginPath()
         c.arc(this.position.x, this.position.y, this.radius, 0, 
             Math.PI * 2)
-            c.fillStyle = 'black'
+            c.fillStyle = 'white'
             c.fill()
             c.closePath()
     }
@@ -72,8 +74,6 @@ const boundaries = []
         y: 0
     }
 })
-    
-let lastKey = ''
 
 const map = [
     ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'], 
@@ -105,6 +105,9 @@ const keys = {
         pressed: false
     }
 }
+
+let lastKey = ''
+let score = 0
 
 function createImage(src) {
     const image = new Image()
@@ -407,6 +410,7 @@ function animate() {
             }
         }
     }
+    // pelets aanraak functie
     for (let i = pellets.length - 1; 0 < i; i--) {
         const pellet = pellets[i]
         pellet.draw()
@@ -419,6 +423,8 @@ function animate() {
         pellet.radius + player.radius
     ) {
             pellets.splice(i, 1)
+            score += 10
+            scoreEl.innerHTML = score
     }
 }
     
