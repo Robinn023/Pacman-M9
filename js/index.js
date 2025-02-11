@@ -507,6 +507,11 @@ for (let i = ghosts.length - 1; 0 <= i; i--){
     }
 }
 
+    // win conditie
+    if (pellets.length === 0) {
+        cancelAnimationFrame(animationId)
+    }   
+
     //power ups aan
     for (let i = powerUps.length - 1; 0 <= i; i--) { 
         const powerUp = powerUps[i] 
@@ -533,7 +538,8 @@ for (let i = ghosts.length - 1; 0 <= i; i--){
     }
     
     // pelets aanraak functie
-    for (let i = pellets.length - 1; 0 < i; i--) {
+    for (let i = pellets.length - 1; i >= 0; i--)
+    {
         const pellet = pellets[i]
         pellet.draw()
 
