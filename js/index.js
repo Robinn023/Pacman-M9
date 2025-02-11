@@ -28,7 +28,7 @@ class Boundary {
     constructor({ position,velocity }) {
         this.position = position
         this.velocity = velocity
-        this.radius = 17
+        this.radius = 15
     }
     draw(){
         c.beginPath()
@@ -48,19 +48,20 @@ class Boundary {
 
 class Ghost  {
     static speed = 1
-    constructor({ position,velocity, color = 'red' }) {
+    constructor({ position,velocity, color = 'red'}) {
         this.position = position
         this.velocity = velocity
-        this.radius = 17
+        this.radius = 15
         this.color = color
         this.prevCollisions = []
         this.speed = 1
+        this.scared = false
     }
     draw(){
         c.beginPath()
         c.arc(this.position.x, this.position.y, this.radius, 0, 
             Math.PI * 2)
-            c.fillStyle = 'this.color'
+            c.fillStyle = this.scared ? 'blue' : this.color;
             c.fill()
             c.closePath()
     }
@@ -87,19 +88,45 @@ class Pellet  {
     }
 }
 
+class PowerUp  {
+    constructor({ position }) {
+        this.position = position
+        this.radius = 10
+    }
+    draw(){
+        c.beginPath()
+        c.arc(this.position.x, this.position.y, this.radius, 0, 
+            Math.PI * 2)
+            c.fillStyle = 'white'
+            c.fill()
+            c.closePath()
+    }
+}
+
 const pellets = []
 const boundaries = []
+const powerUps = []
 const ghosts = [
     new Ghost({
        position: {
-        x: Boundary.width * 7 + Boundary.width / 2,
-        y: Boundary.height + Boundary.height / 2
+        x: Boundary.width * 6 + Boundary.width / 2,
+        y: Boundary.height * 9+ Boundary.height / 2
        },
        velocity: {
         x: Ghost.speed,
         y: 0
        }
-    })
+    }),
+    new Ghost({
+        position: {
+         x: Boundary.width * 8 + Boundary.width / 2,
+         y: Boundary.height * 3 + Boundary.height / 2
+        },
+        velocity: {
+         x: Ghost.speed,
+         y: 0
+        }
+     })
 ]
 const player = new Player({
         position: {
@@ -115,16 +142,16 @@ const player = new Player({
 const map = [
     ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'], 
     ['|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'],
-    ['|', '.', 'b', '.', '[', '7', ']', ' ', 'b', '.', '|'],
+    ['|', '.', 'b', '.', '[', '7', ']', '.', 'b', '.', '|'],
     ['|', '.', '.', '.', '.', '_', '.', '.', '.', '.', '|'],
     ['|', '.', '[', ']', '.', ' ', '.', '[', ']', '.', '|'],
     ['|', '.', '.', '.', '.', '^', '.', '.', '.', '.', '|'],
     ['|', '.', 'b', '.', '[', '+', ']', '.', 'b', '.', '|'],
-    ['|', '.', '.', '.', '.', '_', '.', ' ', '.', '.', '|'],
+    ['|', '.', '.', '.', '.', '_', '.', '.', '.', '.', '|'],
     ['|', '.', '[', ']', '.', '.', '.', '[', ']', '.', '|'],
     ['|', '.', '.', '.', '.', '^', '.', '.', ' ', '.', '|'],
     ['|', '.', 'b', '.', '[', '5', ']', '.', 'b', '.', '|'],
-    ['|', '.', '.', '.', '.', '.', '.', '.', '.', '.', '|'],
+    ['|', '.', '.', '.', '.', '.', '.', '.', '.', 'P', '|'],
     ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '3']
   ]
 
@@ -341,6 +368,16 @@ map.forEach((row, i) => {
                     })
                 )
             break
+            case 'P':
+                powerUps.push(
+                    new PowerUp({
+                        position: {
+                            x: j * Boundary.width + Boundary.width / 2, 
+                            y: i * Boundary.height + Boundary.height / 2
+                        }
+                    })
+                )
+            break
 
         }
     })
@@ -385,6 +422,7 @@ function animate() {
                 player.velocity.y = -1
             }
         }
+
        
     }else if (keys.a.pressed && lastKey === 'a') {
         for (let i = 0; i < boundaries.length; i++) {
@@ -449,6 +487,32 @@ function animate() {
             }
         }
     }
+
+    //power ups aan
+    for (let i = powerUps.length - 1; 0 <= i; i--) { 
+        const powerUp = powerUps[i] 
+        powerUp.draw()
+    
+    //speler raakt ghost aan
+        if (
+            Math.hypot(
+                powerUp.position.x - player.position.x, 
+                powerUp.position.y - player.position.y
+            ) < 
+            powerUp.radius + player.radius 
+        ) {
+            powerUps.splice(i, 1) 
+
+            ghosts.forEach((ghost) => {
+            ghost.scared = true
+
+            setTimeout(() => {
+            ghost.scared = false 
+        }, 3000)
+        })
+        }
+    }
+    
     // pelets aanraak functie
     for (let i = pellets.length - 1; 0 < i; i--) {
         const pellet = pellets[i]
@@ -497,7 +561,7 @@ function animate() {
     ) {
         cancelAnimationFrame(animationId)
     }
-    
+
         const collisions = [];
     
         boundaries.forEach(boundary => {
