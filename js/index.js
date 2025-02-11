@@ -487,6 +487,25 @@ function animate() {
             }
         }
     }
+    // detectie botsing tussen speler en ghost
+for (let i = ghosts.length - 1; 0 <= i; i--){
+    const ghost = ghosts[i]
+
+    // ghost raakt speler aan
+    if (
+        Math.hypot(
+            ghost.position.x - player.position.x, 
+            ghost.position.y - player.position.y
+        ) < 
+        ghost.radius + player.radius
+    ) {
+        if (ghost.scared){
+            ghosts.splice(i, 1) // Verwijder het spook als het bang is
+        } else {
+            cancelAnimationFrame(animationId) // Stop het spel als het niet bang is
+        }
+    }
+}
 
     //power ups aan
     for (let i = powerUps.length - 1; 0 <= i; i--) { 
@@ -508,7 +527,7 @@ function animate() {
 
             setTimeout(() => {
             ghost.scared = false 
-        }, 3000)
+        }, 5000)
         })
         }
     }
@@ -551,16 +570,6 @@ function animate() {
 
     ghosts.forEach((ghost) => {
         ghost.update()
-
-        if (
-            Math.hypot(
-                ghost.position.x - player.position.x, 
-                ghost.position.y - player.position.y
-            ) < 
-        ghost.radius + player.radius
-    ) {
-        cancelAnimationFrame(animationId)
-    }
 
         const collisions = [];
     
